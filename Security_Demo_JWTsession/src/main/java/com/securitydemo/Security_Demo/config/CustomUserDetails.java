@@ -5,12 +5,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class CustomUserDetails implements UserDetails {
-
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
     private String fullname;
-
     private String authkey;
 
     public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities,

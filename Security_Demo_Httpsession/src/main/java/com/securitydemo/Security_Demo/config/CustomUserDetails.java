@@ -1,7 +1,6 @@
 package com.securitydemo.Security_Demo.config;
 
 import java.util.Collection;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

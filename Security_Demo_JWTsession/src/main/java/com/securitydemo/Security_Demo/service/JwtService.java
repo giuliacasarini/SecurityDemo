@@ -17,10 +17,8 @@ import javax.crypto.SecretKey;
 public class JwtService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
-
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
-
     public String extractUsername(String token) {
         Claims claims = extractClaim(token);
         return claims.getSubject();

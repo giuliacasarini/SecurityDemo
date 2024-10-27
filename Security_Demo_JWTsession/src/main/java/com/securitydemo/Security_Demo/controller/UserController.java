@@ -21,13 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class UserController {
-
-
     private final CustomUserDetailsService customUserDetailsService;
     private final OTPService otpService;
     private final UserService userService;
-
-
 
     @Autowired
     public UserController(CustomUserDetailsService customUserDetailsService, UserService userService, OTPService otpService) {

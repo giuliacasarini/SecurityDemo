@@ -91,7 +91,7 @@ public class UserController {
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@ModelAttribute("password") ChangePasswordRequest changePasswordRequest, Principal principal, Model model) {
         String username = principal.getName();
-        if (Objects.equals(changePasswordRequest.getNewPassword(), changePasswordRequest.getconfirmPassword())){
+        if (Objects.equals(changePasswordRequest.getNewPassword(), changePasswordRequest.getConfirmPassword())){
             userService.changePassword(username, changePasswordRequest);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Location", "/home");
