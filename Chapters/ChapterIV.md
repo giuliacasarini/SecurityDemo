@@ -9,7 +9,7 @@
 # Chapter IV: Advanced Security Techniques in Spring Boot Applications
 ## Introduction
 
-In this final chapter, we will explore the development of a Spring Boot application that handles user registration, login, and logout functionalities. This application will leverage key security concepts such as password encryption, Time-based One-Time Password (TOTP) for login, and JSON Web Tokens (JWT) for managing user sessions. By the end of this chapter, you will have a comprehensive understanding of how to implement robust security measures in a Spring Boot application.  
+In this final chapter, we will explore the development of a Spring Boot application that handles user registration, login, and logout functionalities. This application will leverage key security concepts such as password encryption, Time-based One-Time Password (TOTP) for login, and JSON Web Tokens (JWT) for managing user sessions. By the end of this chapter, a comprehensive understanding of implementing robust security measures in a Spring Boot application will be achieved.
 
 ## Practical Implementation  
 

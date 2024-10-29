@@ -14,7 +14,7 @@
 
 Session management is crucial for maintaining user state across multiple requests in web applications. It allows servers to remember user information, enhancing the user experience by preventing repeated logins and data entries. This chapter covers various approaches to session management in Spring Boot, focusing on HTTP sessions and JSON Web Tokens (JWT).
 
-Now let's take a look at the 2 technologies, focusing then more on JWT
+Now let's take a look at the 2 technologies.
 
 ## Comparing HTTP Sessions and JWT
 
@@ -202,4 +202,4 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 ### Conclusion 
 
-Understanding session management is crucial for developing secure and efficient applications. Session management in Spring Boot is straightforward and adaptable. You can store sessions in memory, in a database, or in Redis, depending on the scalability and distributed needs of your application.
+Understanding session management is crucial for developing secure and efficient applications. In the context of HTTP sessions and JWTs, Spring Boot provides a straightforward and adaptable approach to managing sessions. Depending on the application's scalability and distributed requirements, sessions can be stored in memory, in a database, or in Redis, ensuring that the session management strategy aligns with security and performance goals.

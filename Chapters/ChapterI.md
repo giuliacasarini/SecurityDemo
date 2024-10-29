@@ -34,7 +34,7 @@ Encryption is crucial for securing applications by:
 - **Minimizes Breach Impact**: Reduces the potential damage from data breaches, making it harder for attackers to exploit sensitive information.
 - **Builds Trust**: Demonstrates a strong commitment to data security, strengthening user trust and enhancing the organization’s reputation.
 
-In Spring Boot applications, encryption is commonly employed to protect data stored in databases, secure API communications, and safeguard sensitive information like passwords and personal details.
+In **Spring Boot applications**, encryption is commonly used to **secure API communications** and **protect sensitive information**, such as passwords and personal data, stored in databases.
 
 ## **Cryptography and Authentication with BCrypt**
 

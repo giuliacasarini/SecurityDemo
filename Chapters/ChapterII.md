@@ -33,6 +33,7 @@ Moreover, many regulatory frameworks and compliance standards, such as **GDPR** 
 In the realm of web application security, two-factor authentication (2FA) has emerged as a fundamental mechanism for enhancing user safety. It serves as a critical barrier against unauthorized access, significantly complicating the efforts of attackers who aim to gain control over user accounts solely through stolen passwords. For developers utilizing Spring Boot, the integration of 2FA not only fortifies applications but also conveys a message of trust to users, underscoring a dedication to the protection of their sensitive information.
 
 Here is a visual representation of the 2FA process:
+ ![Two-Factor Authentication Process Diagram](images/TFADiagram.png)
 
 1. **User enters credentials**: The user logs in with a username and password.  
 2. **System requests second factor**: The system sends a verification code to the user’s phone or email.  
@@ -158,7 +159,7 @@ public class YubikeyService {
 ```
 * ### **Biometric 2FA**: This method involves using fingerprints, facial recognition, or voice patterns.
 
-For biometric 2FA, you might use a third-party service like **WebAuthn** (FIDO2). The following is a high-level concept for using WebAuthn in Spring Boot.  
+For biometric 2FA, a third-party service such as WebAuthn (FIDO2) may be utilized. The following provides a high-level concept for implementing WebAuthn in Spring Boot.  
 **Dependency Configuration (pom.xml)**:  
 ```xml
 <dependency>  
@@ -214,11 +215,11 @@ Each of these methods provides different levels of security, with **hardware tok
 
 here is a comparative overview based on security, usability, and implementation complexity.
 
- ![keycloak home](images/TFAMComparison.png)
+ ![Comparison of Various Two-Factor Authentication Methods](images/TFAMComparison.png)
 
 ## Advantages and Challenges of 2FA
 
-* **Enhanced Security**: 2FA significantly reduces the risk of unauthorized access, even if the user’s password is compromised. This is particularly important for sectors like finance and healthcare, where sensitive data must be protected.  
+* **Improved Security**: 2FA significantly reduces the risk of unauthorized access, even if the user’s password is compromised. This is particularly important for sectors like finance and healthcare, where sensitive data must be protected.  
 * **Regulatory Compliance**: 2FA helps organizations meet industry guidelines and legal obligations, avoiding potential penalties for non-compliance.  
 * **User Convenience**: However, 2FA can introduce additional steps in the login process, potentially causing slight delays or frustration.  
 * **Device Dependence**: Users may lose access to their second factor, such as a phone for SMS or email. SMS-based 2FA can also be vulnerable to **SIM-swapping** attacks, which can compromise account security.
@@ -442,7 +443,7 @@ public ResponseEntity<?> register(@RequestParam String username, @RequestParam S
 
 **Disadvantages:**
 
-* **User Friction**: Users must install an app and understand how to set it up, which may deter some, particularly those less familiar with technology.  
+* **User Barrier**: Users need to install an app and figure out how to set it up, which might discourage some individuals, particularly those who are less comfortable with technology.  
 * **Device Dependency**: If a user loses their device or deletes the app, they may become locked out of their account unless backup recovery options are provided.
 <br>
 Enhancing User Experience
@@ -454,3 +455,8 @@ To improve the user experience and increase adoption rates for authenticator app
 * **Multi-Device Support**: Allow users to set up the same account on multiple devices to reduce the risk of losing access due to a single device failure.
 
 Authenticator apps provide a strong combination of security and usability, making them a preferred choice for applications where user protection is paramount.
+
+### Conclusion
+Implementing Two-Factor Authentication (2FA) in Spring Boot applications provides a critical additional layer of security, protecting users from unauthorized access and supporting compliance with security regulations. Through methods like TOTP and the integration of authenticator apps, Spring Boot enables a robust and adaptable authentication system tailored to user needs.
+
+In the next chapter, we will explore session management in Spring Boot, examining how to maintain user information across requests and ensure secure handling of authentication sessions.
