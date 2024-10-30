@@ -4,7 +4,8 @@
     * [Introduction](#introduction)
     * [Cryptography and Authentication with BCrypt](#cryptography-and-authentication-with-bcrypt)
       + [Practical Implementation](#practical-implementation)
-    * [Alternative Password Hashing: PBKDF2](#pbkdf2-based-password-encoding)
+    * [Alternative Password Hashing: PBKDF2](#alternative-to-step-3-pbkdf2-based-password-encoding)
+    * [Password Reset](#handling-password-resets)
 
 
 
@@ -42,9 +43,9 @@ Cryptography plays a vital role in safeguarding sensitive data like user passwor
 
 Spring Boot provides seamless integration with BCrypt through the Spring Security module, enabling developers to easily encode and verify passwords, thereby enhancing application security.
 
-### **Secure Password Storage**
+### BCrypt's Core Purpose: **Secure Password Storage**
 
-The first line of defense in our authentication system is the secure storage of passwords. Instead of storing passwords as plain text, which is vulnerable to theft, we hash them using `BCryptPasswordEncoder`, provided by Spring Security. BCrypt applies a unique salt to each password and allows us to adjust the computational cost (or work factor), making it more resistant to brute-force attacks.
+The first line of defense in an authentication system is the secure storage of passwords. Instead of storing passwords as plain text, which is vulnerable to theft, it is possible to hash using `BCryptPasswordEncoder`, provided by Spring Security. BCrypt applies a unique salt to each password and allows for the adjustment of the computational cost, enhancing resistance to brute-force attacks.
 
 
 In Spring Security, a `PasswordEncoder` is essential for securely storing user passwords by encoding (hashing) them before storage.
@@ -55,11 +56,11 @@ public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();  
 }
 ```
-This `PasswordEncoder` is used whenever a user creates or updates its password, ensuring that the password is stored securely in its hashed form in the database. When a user logs in, the password they provide is hashed again and compared to the stored hash, without ever exposing the plain-text password.
+This `PasswordEncoder` is used whenever a user creates or updates its password, ensuring that the password is stored securely in its hashed form in the database. When a user logs in, the password the user provide is hashed again and compared to the stored hash, without ever exposing the plain-text password.
 
 ## Practical Implementation
 
-### Setting Up the Environment
+### 1.Setting Up the Environment
 To get started, include the following dependency in `pom.xml`:
 ```xml
 <dependencies>  
@@ -70,8 +71,8 @@ To get started, include the following dependency in `pom.xml`:
 </dependencies>
 ```
 
-**Encoding Passwords**  
-How to encode passwords using BCrypt in a Spring Boot application:
+### 2.Encoding Passwords  
+The widely used **BCryptPasswordEncoder** hashes passwords using the **BCrypt** algorithm, which incorporates a random salt to protect against dictionary attacks. How to encode passwords using BCrypt in a Spring Boot application:
 ```java 
 public class PasswordEncoderUtil {  
     public static void main(String[] args) {  
@@ -90,8 +91,8 @@ public class PasswordEncoderUtil {
 }
 ```
 
-**Verifying Passwords**  
-Spring Security provides the **PasswordEncoder** interface to hash and verify passwords. The widely used **BCryptPasswordEncoder** hashes passwords using the **BCrypt** algorithm, which incorporates a random salt to protect against dictionary attacks.
+### 3.Verifying Passwords
+Verifying that an encoded password matches a raw password is essential for authentication. BCryptPasswordEncoder provides a .matches() method, which allows you to verify if a raw password matches the encoded version:
 ```java 
 public class PasswordVerifier {
 
@@ -115,28 +116,7 @@ public class PasswordVerifier {
 }
 ```
 
-## PBKDF2-Based Password Encoding
-
-Spring also supports **PBKDF2** (Password-Based Key Derivation Function) for password hashing, which uses a deliberately slow hashing process to prevent brute-force attacks:
-```java
-public class PasswordEncoderUtil {
-
-    public static void main(String[] args) {
-        // Create a PBKDF2 Password Encoder 
-        Pbkdf2PasswordEncoder encoder = Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8();
-        
-        // Define the raw password to encode
-        String rawPassword = "myPassword";
-        
-        // Encode the raw password
-        String hashedPassword = encoder.encode(rawPassword);
-        
-        // Output the hashed password
-        System.out.println("Hashed Password: " + hashedPassword);
-    }
-}
-```
-**Storing Encoded Passwords in a Database**  
+### 4.Storing Encoded Passwords in a Database  
 When storing passwords in a database, always store the encoded version. Here’s an example using Spring Data JPA:
 ```java
 public interface UserRepository extends JpaRepository<User, Long> {  
@@ -153,13 +133,13 @@ public class User {
 }
 
 ```
-**Securing REST APIs with BCrypt**  
-To secure REST APIs, utilize Spring Security to authenticate users based on their encoded passwords. Here’s a basic configuration:
+### 5.Securing REST APIs with BCrypt  
+To secure REST APIs, Spring Security can authenticate users based on encoded passwords and secure HTTP requests. Here’s a basic configuration:
 
 ```java
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    // Define a BCryptPasswordEncoder bean for secure password encoding
+    // Define BCryptPasswordEncoder for secure password encoding
     @Bean  
     public BCryptPasswordEncoder passwordEncoder() {  
         return new BCryptPasswordEncoder();  
@@ -178,6 +158,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 }
 ```
 
+### Alternative to step 3: PBKDF2-Based Password Encoding
+
+Spring also supports **PBKDF2** (Password-Based Key Derivation Function) for password hashing. <br>
+It works by hashing a password with a unique salt and repeating this hashing process for a specified number of iterations, making the computation deliberately slow. This approach strengthens security against brute-force and dictionary attacks, as the repeated hashing increases the time required to guess passwords. 
+```java
+public class PasswordEncoderUtil {
+
+    public static void main(String[] args) {
+        // Create a PBKDF2 Password Encoder 
+        Pbkdf2PasswordEncoder encoder = Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+        
+        // Define the raw password to encode
+        String rawPassword = "myPassword";
+        
+        // Encode the raw password
+        String hashedPassword = encoder.encode(rawPassword);
+        
+        // Output the hashed password
+        System.out.println("Hashed Password: " + hashedPassword);
+    }
+}
+```
 
 ### **Best Practices for Password Management**
 
@@ -194,7 +196,7 @@ Implementing secure password policies is essential for protecting user accounts.
 Password reset functionality must be implemented securely to prevent unauthorized access. This typically involves generating a unique token that is sent to the user’s registered email address. Once the user verifies their identity using the token, they can set a new password, which should be hashed and stored securely.<br>
 Implementing secure password reset functionality is crucial to protect user accounts from unauthorized access.<br> The example below outlines the basic steps for generating a password reset token, sending it to the user's registered email, and allowing the user to set a new password.
 
-First define an entity class to represent a password reset token with necessary attributes.
+1) Define an entity class to represent a password reset associating each token with a specific user and defining an expiration date:
 ```java
 @Entity
 public class PasswordResetToken {
@@ -211,7 +213,7 @@ public class PasswordResetToken {
 }
 
 ```
-Handle the password reset process by sending a reset token to the user's email.
+2. The resetPassword endpoint starts the password reset process by sending a reset token to the user's email.
 ```java
 @PostMapping("/user/resetPassword")
 public GenericResponse resetPassword(HttpServletRequest request, 
@@ -228,14 +230,14 @@ public GenericResponse resetPassword(HttpServletRequest request,
 }
 
 ```
-Create a new password reset token for the specified user and save it in the repository
+3. Create a new password reset token for the specified user and save it in the repository
 ```java
 public void createPasswordResetTokenForUser(User user, String token) {
     PasswordResetToken myToken = new PasswordResetToken(token, user);
     passwordTokenRepository.save(myToken);
 }
 ```
-Construct the email containing the reset token for the user and a generic email message with the specified subject and body for the user
+4. Construct the email containing the reset token for the user and a generic email message with the specified subject and body for the user
 ```java
 private SimpleMailMessage constructResetTokenEmail(
   String contextPath, String token, User user) {
@@ -256,7 +258,7 @@ private SimpleMailMessage constructEmail(String subject, String body,
 }
 
 ```
-Class to represent a generic response message, either successful or with an error:
+5. Class to represent a generic response message, either successful or with an error:
 ```java
 public class GenericResponse {
     private String message;
@@ -275,7 +277,7 @@ public class GenericResponse {
 }
 
 ```
-The change password page, validating the provided token
+6. The change password page, validating the provided token
 ```java
 @GetMapping("/user/changePassword")
 public String showChangePasswordPage(Locale locale, Model model, 
@@ -291,7 +293,7 @@ public String showChangePasswordPage(Locale locale, Model model,
 }
 
 ```
-Validate the password reset token, checking for existence and expiration
+7. Validate the password reset token, checking for existence and expiration
 ```java
 public String validatePasswordResetToken(String token) {
     final PasswordResetToken passToken = passwordTokenRepository.findByToken(token);
@@ -310,7 +312,7 @@ private boolean isTokenExpired(PasswordResetToken passToken) {
     return passToken.getExpiryDate().before(cal.getTime());
 }
 ```
-Save the new password for the user after validating the reset token
+8. Save the new password for the user after validating the reset token
 ```java
 @PostMapping("/user/savePassword")
 public GenericResponse savePassword(@Valid PasswordDto passwordDto) {
@@ -334,14 +336,14 @@ public GenericResponse savePassword(@Valid PasswordDto passwordDto) {
 }
 
 ```
-Change the user's password and save the updated user information.
+9. Change the user's password and save the updated user information.
 ```java
 public void changeUserPassword(User user, String password) {
     user.setPassword(passwordEncoder.encode(password));
     repository.save(user);
 }
 ```
-Data transfer object for handling password-related information during password reset.
+10. Data transfer object for handling password-related information during password reset.
 ```java
 public class PasswordDto {
 

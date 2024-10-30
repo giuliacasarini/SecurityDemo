@@ -1,8 +1,8 @@
 # Table of contents
 
 - [Chapter III: Session Management in Spring Boot](#chapter-iii-session-management-in-spring-boot)
-    * [Introduction](#the-nuts-and-bolts-of-oauth2)
-    * [Comparing HTTP Sessions and JWT](#comparing-http-sessions-and-jwt)
+    * [Introduction](#introduction)
+    * [Comparing HTTP and JWT Sessions](#comparing-http-and-jwt-sessions)
     * [HTTP Sessions in Spring Boot](#http-sessions-in-spring-boot)
     * [JWT Session in Spring Boot](#jwt-session-in-spring-boot)
        + [Example Implementation](#example-implementation)
@@ -12,11 +12,11 @@
 
 ## Introduction
 
-Session management is crucial for maintaining user state across multiple requests in web applications. It allows servers to remember user information, enhancing the user experience by preventing repeated logins and data entries. This chapter covers various approaches to session management in Spring Boot, focusing on HTTP sessions and JSON Web Tokens (JWT).
+Session management is crucial for **maintaining user state across multiple requests** in web applications. It allows servers to remember user information, enhancing the user experience by preventing repeated logins and data entries. This chapter covers 2 approaches to session management in Spring Boot: HTTP sessions and JSON Web Tokens (JWT) sessions.
 
 Now let's take a look at the 2 technologies.
 
-## Comparing HTTP Sessions and JWT
+## Comparing HTTP and JWT Sessions
 
 A direct comparison between HTTP sessions and JWT-based sessions reveals distinct advantages and challenges for each method:
 
@@ -27,11 +27,13 @@ A direct comparison between HTTP sessions and JWT-based sessions reveals distinc
   * **Use Case**: Ideal for microservices and applications requiring high scalability and statelessness.  
   * **Security**: More complex token management but can offer better performance in distributed systems.
 
+ ![Comparison of two sessions methods types](images/sessionsComparison.png)
+
 ## HTTP Sessions in Spring Boot
 
 <u>How HTTP Sessions Work?</u>
 
-HTTP sessions rely on the server storing session data associated with a unique session ID. When a user logs in, the server creates a session and generates a session ID, which is sent to the client as a cookie. This session ID is included in subsequent requests, allowing the server to recognize the user and maintain state.
+HTTP sessions rely on the server storing session data associated with a **unique session ID**. When a user logs in, the server creates a session and generates a session ID, which is sent to the client as a cookie. This session ID is included in subsequent requests, allowing the server to recognize the user and maintain state.
 
 ### Advantages of Using HTTP Sessions
 
@@ -51,9 +53,10 @@ server:
   servlet:
     session:
       timeout: 30m # Set session timeout to 30 minutes
-
 ```
-The following code ensures that all requests to the application are authenticated and configures session management to create sessions only when necessary
+The following code ensures that 
+- all requests to the application are authenticated  
+- configures session management to create sessions only when necessary
 ```java
 @Configuration
 @EnableWebSecurity
@@ -76,7 +79,7 @@ public class SecurityConfig {
 
 <u>How JWT Works for Stateless Session Management?</u>
 
-JSON Web Tokens provides a stateless mechanism for managing sessions. It encodes user information in a signed token that is sent to the client. The client stores this token and includes it in the Authorization header of subsequent requests(or saves it in a cookie/local storage), allowing the server to authenticate the user without maintaining session state.
+JSON Web Tokens provides a stateless mechanism for managing sessions. It encodes user information in a **signed token** that is sent to the client. The client stores this token and includes it in the Authorization header of subsequent requests or saves it in a cookie/local storage, allowing the server to authenticate the user without maintaining session state.
 
 ### **Advantages** of Using JWT for Session Management
 
@@ -86,7 +89,7 @@ JSON Web Tokens provides a stateless mechanism for managing sessions. It encodes
 ### **Challenges and Security Considerations** with JWT
 
 * **Token Expiration**: Proper management of token expiration and renewal is essential to maintain security.  
-* **Token Interception**: If tokens are not transmitted securely (e.g., over HTTPS), they can be intercepted by malicious actors.
+* **Token Interception**: If tokens are not transmitted securely, they can be intercepted by malicious actors.
 
 <br>
 
@@ -105,7 +108,7 @@ To implement JWT in a Spring Boot application, start by adding the necessary dep
     </dependency>  
 </dependencies>
 ```
-Next, create a utility class for JWT operations:
+Next, create a utility class for JWT operations: create, validate and analyze JWT tokens, using a secret key to keep the information in the token secure.
 ```java
 @Component  
 public class JwtUtil {  
@@ -139,7 +142,7 @@ public class JwtUtil {
     }  
 }
 ```
-Generating JWT Upon User Login with an authentication controller:
+Create the AuthController to provide a JWT token upon valid user login, which allows the user to access the application's protected endpoints:
 ```java
 @RestController  
 public class AuthController {
@@ -164,7 +167,7 @@ public class AuthController {
 }
 ```
 Verifying JWT in API Requests: <br>
-Implementing a filter to verify JWT in API requests, ensuring that only authenticated users can access protected endpoints.
+JwtRequestFilter intercepts each request, extracts and verifies the JWT token in the Authorization header . If the token is valid, it sets up an authentication for the user in the security context of the application, allowing access to protected endpoints.
 ```java
 public class JwtRequestFilter extends OncePerRequestFilter {
 

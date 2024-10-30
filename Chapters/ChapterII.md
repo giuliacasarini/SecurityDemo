@@ -35,10 +35,6 @@ In the realm of web application security, two-factor authentication (2FA) has em
 Here is a visual representation of the 2FA process:
  ![Two-Factor Authentication Process Diagram](images/TFADiagram.png)
 
-1. **User enters credentials**: The user logs in with a username and password.  
-2. **System requests second factor**: The system sends a verification code to the user’s phone or email.  
-3. **User enters verification code**: The user enters the one-time password.  
-4. **Access granted**: The system verifies the code and grants access.
 
 The typical 2FA process in web applications involves the user entering a password, followed by a verification code. This code can be delivered in several ways:
 
@@ -256,19 +252,19 @@ TOTP is widely used for 2FA because it offers several benefits:
 ```xml
 <dependency>  
     <groupId>org.springframework.boot</groupId>  
-    <artifactId>spring-boot-starter-web</artifactId>  //Enables building web applications, including RESTful APIs
+    <artifactId>spring-boot-starter-web</artifactId>  
 </dependency>
 <dependency> 
     <groupId>org.springframework.boot</groupId>  
-    <artifactId>spring-boot-starter-security</artifactId>  // Provides security features for authentication and authorization.  
+    <artifactId>spring-boot-starter-security</artifactId> 
 </dependency>  
 <dependency> 
     <groupId>org.springframework.boot</groupId>  
-    <artifactId>spring-boot-starter-data-jpa</artifactId> //Facilitates database interaction and user data management 
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
 </dependency>  
 <dependency>  
     <groupId>com.warrenstrange</groupId>  
-    <artifactId>googleauth</artifactId> //for generating Time-Based One-Time Passwords (TOTP) for 2FA 
+    <artifactId>googleauth</artifactId>
     <version>1.4.0</version>  
 </dependency>
 ```
@@ -303,7 +299,7 @@ public class SecurityConfig {
     * `antMatchers("/login", "/register").permitAll()`: Allows public access to `/login` and `/register` endpoints, meaning users do not need to be authenticated to access them.  
     * `anyRequest().authenticated()`: All other requests require authentication.  
   * **formLogin()**: Enables form-based login.  
-    * `loginPage("/login").permitAll()`: Specifies that the login form is located at `/login` and that everyone (authenticated or not) can access it.  
+    * `loginPage("/login").permitAll()`: The login form is located at `/login` and that everyone (authenticated or not) can access it.  
   * **logout()**: Enables logout functionality, allowing any user to log out.
 
 

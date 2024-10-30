@@ -61,7 +61,7 @@ Security\_Demo
 
 Let's have a look at each class inside the `config` package:
 
-* **CustomAuthenticationFilter**: This filter intercepts custom authentication requests:
+* **CustomAuthenticationFilter**: This filter intercepts and manages authentication requests:
     - totpcode is the form input related to the otp code that is passed to the obtain otp code function 
     - the otp code is passed along with the username and password to the CustomAuthenticationToken function
 
@@ -95,8 +95,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     }
 }
 ```
-* **CustomAuthenticationProvider**: Manages custom authentication, likely with specific validations for this project.  
-   - The authentication process begins by searching for the user in the database using the username, checking if the password matches the one stored in the database, and verifying if the OTP code is valid with respect to the key stored in the database. If everything is correct, the authentication is successfully completed
+* **CustomAuthenticationProvider**: Manages  authentication process: 
+   - 1. searching for the user in the database using the username
+   - 2. checking if the password matches the one stored in the database 
+   - 3. verifying if the OTP code is valid with respect to the key stored in the database. <br>
+If everything is correct, the authentication is successfully completed
  
 ```java    
 @Component
@@ -140,10 +143,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     }
 }
 ``` 
-* **CustomAuthenticationSuccessHandler**: Defines what happens when authentication is successful.  
+* **CustomAuthenticationSuccessHandler**: Defines what happens when authentication is successful or not.  
   - successHandler handles what needs to happen: 
     - If authentication is successful: generates the jwt token for the newly authenticated user and saves it in a cookie that is attached to the response sent to the client. Then the response saves the cookie and redirects the user to the home page.  
-    - If authentication is not successful, it will log the failure reason and redirect the user back to the login page with an error parameter.
+    - If authentication is not successful, it will log the failure reason and redirect the user back to the login page with an error.
 ```java    
 public class CustomAuthenticationSuccessHandler
         implements AuthenticationSuccessHandler {
@@ -180,8 +183,7 @@ public class CustomAuthenticationSuccessHandler
 }
   
  ```   
-* **CustomAuthenticationToken**: Represents a custom authentication token used to identify users.  
-    - Add otp code to the standard authentication parameters as well.  
+* **CustomAuthenticationToken**: Represents a custom authentication token used to identify users, infact it adds the otp code to the standard authentication parameters.  
   
     
 ```java
@@ -206,8 +208,7 @@ public class CustomAuthenticationToken extends UsernamePasswordAuthenticationTok
     }
 }  
 ```   
-* **CustomUserDetails**: Implements custom user details for the authentication process.  
-    -  Adds to the standard parameters authkey: the key saved in the db to generate otp codes.
+* **CustomUserDetails**: Implements custom user details for the authentication process, infact it adds the authkey parameter: the key saved in the db to generate otp codes.
 
 
 ```java
@@ -344,7 +345,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 * **SecurityConfig**: Contains the main Spring Security configuration for the project, such as enabling filters and managing secure routes.
     - In the securityfilterchain the session is stateless → no http sessions are used.  
     - Provider is passed to do authentication: register and login can be accessed without authentication, to access the rest the user must be authenticated.  
-With addfilterbefore filters are added for authentication and jwt token verification so that the check is done before authentication
+    - With addfilterbefore filters are added for authentication and jwt token verification so that the check is done before authentication
 
 ```java
 @Configuration
@@ -413,7 +414,7 @@ public class SecurityConfig {
 ```
 **Package controller**: Manages HTTP requests and handles the presentation logic.
 
-* **UserController**: Explain that this class handles user requests such as login, registration, and password management. It orchestrates these operations by using the appropriate services.
+* **UserController** handles user requests such as login, registration, and password management. It orchestrates these operations by using the appropriate services.
 
 ```java
 @Controller
@@ -498,9 +499,7 @@ public class UserController {
         }
 
     }
-
 }
-
 ```
 **Package dto**: Defines data structures used to transport information between the client and server.
 
@@ -512,7 +511,7 @@ public class UserController {
       private String confirmPassword;  
   }  
 ```  
-* **UserDto**:it Represents an object that contains essential user information and it is used for user’s registration.
+* **UserDto**: It represents an object that contains essential user information and it is used for user’s registration.
 ```java    
   public class UserDto {   
       private String username;  
@@ -520,7 +519,7 @@ public class UserController {
       private String fullname;     
   }
 ```
-**Package entity**: Contains entities that represent persistent objects (in the database).
+**Package entity**: Contains entities that represent persistent objects in the database.
 
 * **User**: This class represents the user model, likely including attributes such as `id`, `username`, `password`, and other data related to authentication and user profiles.
 ```java
@@ -546,7 +545,7 @@ public class User {
 ```
 **Package repository**: Handles data persistence and database management.
 
-* **UserRepository**: It is the interface that extends JpaRepository, used for CRUD (Create, Read, Update, Delete) operations on users. Explain how JpaRepository works and how it is used to access the database.
+* **UserRepository**: It is the interface that extends JpaRepository, used for CRUD (Create, Read, Update, Delete) operations on users.
 ```java
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);
@@ -555,10 +554,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 ```
 **Package service**: Contains business logic related to user authentication and management.
 
-* **CustomUserDetailsService**: This class implements the logic for loading users for JWT-based authentication. It returns the user's parameters 
+* **CustomUserDetailsService**: This class retrieves user information from the database based on the username, returning a CustomUserDetails object for authentication.
  
 ```java    
-
 public class CustomUserDetailsService implements UserDetailsService {
     private UserRepository userRepository;
     public CustomUserDetailsService(UserRepository userRepository) {
@@ -722,7 +720,7 @@ public interface UserService {
 }
 ```
 * **UserServiceImpl**: The implementation of the user service, handling business logic like user registration and credential management.
-    - return a user
+    - find a user by name
     - save a user
     - change user pwd
 
@@ -792,10 +790,10 @@ Security\_Demo
                 │   └── UserServiceImpl  
                 └── SecurityDemoApplication
 
-### 3.2 Detailed File Analysis <br>
+### 3.2 Detailed File Analysis different from the previous version <br>
 **Package config**
 * **CustomAuthenticationSuccessHandler**:
- defines a custom authentication success handler that, upon successful user login, logs the username to the console and redirects the user to the home page.
+ defines a custom authentication success handler that, upon successful user login, logs the username and redirects the user to the home page.
 ```java
 public class CustomAuthenticationSuccessHandler
         implements AuthenticationSuccessHandler {
@@ -811,7 +809,7 @@ public class CustomAuthenticationSuccessHandler
     }
 }
 ```
-* **SecurityConfig**:It configures Spring Security settings, including custom authentication handling, password encoding, request authorization, and logout management.
+* **SecurityConfig**: It configures Spring Security settings, including custom authentication handling, password encoding, request authorization, and logout management.
 ```java
 public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
